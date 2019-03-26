@@ -1,0 +1,17 @@
+@startuml
+教学管理前端 -> 课程管理服务: 请求课程发布
+课程管理服务 -> CMS服务: 通过feign一键发布课程
+CMS服务->CMS服务: 执行页面静态化
+CMS服务->GridFs: 存储静态文件
+CMS服务->RabbitMQ: 发送"页面发布"消息
+RabbitMQ -> CMSClient服务: 接收"页面发布"消息
+CMSClient服务->CMSClient服务: 查询"页面"信息
+CMSClient服务->GridFs: 从GridFs中下载静态HTML文件
+
+CMSClient服务<-- GridFs
+
+CMS服务--> 课程管理服务: 返回发布结果
+课程管理服务-> 课程管理服务: 更新课程状态
+课程管理服务--> 教学管理前端: 返回发布结果
+教学管理前端-> 教学管理前端: 打开课程详情页面
+@enduml
